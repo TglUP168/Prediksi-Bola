@@ -294,10 +294,11 @@ function parseGroups(raw){
 function makeTeamLogo(team){
   return '<div class="tu-logo"><span>'+tuEsc(tuInitial(team))+'</span><img src="'+tuAttr(tuLogo(team))+'" alt="'+tuAttr(team)+'" onerror="this.style.display=\'none\'"></div>';
 }
+
 function buildGeneratedHTML(groups,cfg){
   const uid='TU_PRO_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
   const total=groups.reduce((a,g)=>a+g.matches.length,0);
-  let opt='<option value="all">TAMPILKAN SEMUA LIGA</option>';
+  let opt='<option value="all">SEMUA LIGA</option>';
   let content='';
   groups.forEach((g,i)=>{
     const gid='lg'+i;
@@ -314,71 +315,85 @@ function buildGeneratedHTML(groups,cfg){
   });
   const logo = cfg.logo ? '<img class="tu-main-logo" src="'+tuAttr(cfg.logo)+'" alt="logo" onerror="this.style.display=\'none\'">' : '';
   const bgStyle = cfg.bg ? "background-image:linear-gradient(135deg,rgba(1,5,10,.88),rgba(0,0,0,.72)),url('"+tuAttr(cfg.bg)+"');" : '';
+  
   return `
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Secular+One&display=swap" rel="stylesheet">
 <style>
-#${uid}{${bgStyle}background-size:cover;background-position:center;width:100%;max-width:100%;margin:20px auto;border:2px solid #00ead3;border-radius:24px;overflow:hidden;color:#fff;font-family:'Rajdhani',Arial,sans-serif;position:relative;box-shadow:0 0 32px rgba(0,234,211,.40), inset 0 0 80px rgba(0,234,211,.05);font-style:normal!important;font-synthesis-style:none!important;transform:none}
-#${uid},#${uid} *{box-sizing:border-box;font-style:normal!important;font-synthesis-style:none!important}
+#${uid}{${bgStyle}background-size:cover;background-position:center;width:100%;max-width:100%;margin:20px auto;border:2px solid #00ead3;border-radius:24px;overflow:hidden;color:#fff;font-family:'Rajdhani',Arial,sans-serif;position:relative;box-shadow:0 0 32px rgba(0,234,211,.40), inset 0 0 80px rgba(0,234,211,.05);font-style:normal!important}
+#${uid} *{box-sizing:border-box}
 #${uid}:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 0,rgba(0,234,211,.20),transparent 30%),radial-gradient(circle at 88% 10%,rgba(255,215,106,.15),transparent 26%),linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:auto,auto,38px 38px,38px 38px;pointer-events:none}
 #${uid} .tu-inner{position:relative;padding:24px;background:linear-gradient(180deg,rgba(0,0,0,.18),rgba(0,0,0,.50))}
 #${uid} .tu-top{width:100%;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;text-align:center!important;padding:10px 0 16px;margin:0 auto!important}
-#${uid} .tu-main-logo{display:block!important;float:none!important;clear:both!important;width:240px;max-width:82%;filter:drop-shadow(0 0 12px #00ead3);margin:0 auto 12px auto!important;text-align:center!important;position:relative;left:auto!important;right:auto!important}
-#${uid} .tu-title{display:flex!important;align-items:center!important;justify-content:center!important;gap:10px;max-width:min(100%,780px);width:fit-content;margin:0 auto!important;padding:12px 20px;border:1px solid rgba(0,234,211,.55);border-radius:999px;background:linear-gradient(90deg,rgba(0,234,211,.18),rgba(255,215,106,.10));font-family:'Secular One',sans-serif;color:#00ead3;text-shadow:0 0 14px rgba(0,234,211,.7);font-size:clamp(18px,3vw,28px);text-transform:uppercase;letter-spacing:.7px;text-align:center!important;line-height:1.25;float:none!important;position:relative;left:auto!important;right:auto!important}
-#${uid} .tu-controls{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:12px;margin:18px 0}
-#${uid} .tu-info,#${uid} .tu-select{border:1px solid rgba(0,234,211,.42);border-radius:15px;background:rgba(0,0,0,.62);color:#fff;padding:13px 14px;text-align:center;font-weight:800;text-transform:uppercase;box-shadow:inset 0 0 16px rgba(0,234,211,.06);min-height:54px;display:flex;align-items:center;justify-content:center}
-#${uid} .tu-select{color:#00ead3;outline:none;cursor:pointer;font-family:'Rajdhani',Arial,sans-serif;font-size:15px}
-#${uid} .tu-clock{display:flex;flex-direction:column;gap:2px;line-height:1.05}
-#${uid} .tu-clock small{display:block;color:#8ffaf2;font-size:11px;letter-spacing:1px;font-weight:900}
-#${uid} .tu-clock b{display:block;color:#fff;font-size:15px}
+#${uid} .tu-main-logo{display:block!important;width:240px;max-width:82%;filter:drop-shadow(0 0 12px #00ead3);margin:0 auto 12px auto!important}
+#${uid} .tu-title{display:flex!important;align-items:center!important;justify-content:center!important;gap:10px;margin:0 auto!important;padding:12px 20px;border:1px solid rgba(0,234,211,.55);border-radius:999px;background:linear-gradient(90deg,rgba(0,234,211,.18),rgba(255,215,106,.10));font-family:'Secular One',sans-serif;color:#00ead3;text-shadow:0 0 14px rgba(0,234,211,.7);font-size:clamp(16px,2.8vw,24px);text-transform:uppercase;letter-spacing:.7px;text-align:center!important;line-height:1.2}
+
+/* --- BAGIAN KONTROL RAMPING --- */
+#${uid} .tu-controls{display:grid;grid-template-columns:0.8fr 1.4fr 0.8fr;gap:8px;margin:18px 0}
+#${uid} .tu-info,#${uid} .tu-select{border:1px solid rgba(0,234,211,.42);border-radius:12px;background:rgba(0,0,0,.62);color:#fff;padding:8px;text-align:center;font-weight:800;text-transform:uppercase;min-height:44px;display:flex;align-items:center;justify-content:center;font-size:13px}
+#${uid} .tu-select{color:#00ead3;outline:none;cursor:pointer;font-family:'Rajdhani',Arial,sans-serif;font-size:13px;width:100%}
+#${uid} .tu-clock{display:flex;flex-direction:column;gap:1px;line-height:1}
+#${uid} .tu-clock small{display:block;color:#8ffaf2;font-size:9px;letter-spacing:0.5px;font-weight:900}
+#${uid} .tu-clock b{display:block;color:#fff;font-size:13px}
+
 #${uid} .tu-ticker{overflow:hidden;border:1px solid rgba(255,215,106,.35);border-radius:14px;background:linear-gradient(90deg,rgba(255,215,106,.12),rgba(0,234,211,.10));margin-bottom:20px;white-space:nowrap}
 #${uid} .tu-ticker span{display:inline-block;padding:11px 0;color:#ffd76a;font-weight:900;text-transform:uppercase;text-shadow:0 0 10px rgba(255,215,106,.45);animation:tuTicker 18s linear infinite}
 @keyframes tuTicker{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
-#${uid} .tu-league{margin-top:18px}
-#${uid} .tu-league-title{display:flex;align-items:center;justify-content:center;gap:12px;margin:20px 0 14px;padding:12px;border-top:1px solid rgba(0,234,211,.45);border-bottom:1px solid rgba(0,234,211,.45);background:linear-gradient(90deg,transparent,rgba(0,234,211,.22),transparent);color:#00ead3;font-family:'Secular One',sans-serif;font-size:clamp(16px,2.5vw,24px);text-align:center;text-transform:uppercase;letter-spacing:.8px;text-shadow:0 0 14px rgba(0,234,211,.55);line-height:1.25}
-#${uid} .tu-league-title b{font-weight:400}
-#${uid} .tu-match{display:grid;grid-template-columns:minmax(0,1fr) 170px minmax(0,1fr);align-items:center;gap:14px;margin:13px 0;padding:16px;border:1px solid rgba(0,234,211,.24);border-radius:20px;background:linear-gradient(135deg,rgba(0,0,0,.74),rgba(0,234,211,.07));box-shadow:0 10px 22px rgba(0,0,0,.28);transition:.25s;animation:tuPop .45s ease both;animation-delay:var(--delay)}
-#${uid} .tu-match:hover{transform:translateY(-2px);border-color:#00ead3;box-shadow:0 0 24px rgba(0,234,211,.22)}
+#${uid} .tu-league-title{display:flex;align-items:center;justify-content:center;gap:12px;margin:20px 0 14px;padding:12px;border-top:1px solid rgba(0,234,211,.45);border-bottom:1px solid rgba(0,234,211,.45);background:linear-gradient(90deg,transparent,rgba(0,234,211,.22),transparent);color:#00ead3;font-family:'Secular One',sans-serif;font-size:clamp(15px,2.2vw,20px);text-transform:uppercase;text-shadow:0 0 14px rgba(0,234,211,.55)}
+
+#${uid} .tu-match{position:relative;display:grid;grid-template-columns:1fr 130px 1fr;align-items:center;gap:10px;margin:12px 0;padding:14px 10px;border-radius:20px;background:#050a14;overflow:hidden;transition:.25s;animation:tuPop .45s ease both;animation-delay:var(--delay)}
+#${uid} .tu-match::before{content:'';position:absolute;width:200%;height:200%;background:conic-gradient(transparent,transparent,transparent,#00ead3);top:-50%;left:-50%;animation:tuNeonRotate 4s linear infinite;z-index:0}
+#${uid} .tu-match::after{content:'';position:absolute;inset:2px;background:linear-gradient(135deg,rgba(0,0,0,0.95),rgba(7,19,31,0.98));border-radius:18px;z-index:1}
+@keyframes tuNeonRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+#${uid} .tu-team,#${uid} .tu-mid{position:relative;z-index:2}
+#${uid} .tu-match:hover{transform:translateY(-2px);box-shadow:0 0 24px rgba(0,234,211,.22)}
 @keyframes tuPop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-#${uid} .tu-team{display:flex;align-items:center;justify-content:center;gap:13px;min-width:0}
-#${uid} .tu-left{justify-content:center;text-align:center}
-#${uid} .tu-right{justify-content:center;text-align:center}
-#${uid} .tu-name{display:flex;align-items:center;justify-content:center;text-align:center;font-family:'Secular One',sans-serif;font-size:clamp(14px,2.2vw,20px);text-transform:uppercase;text-shadow:0 2px 4px #000;line-height:1.1;overflow-wrap:anywhere;max-width:100%}
-#${uid} .tu-logo{width:58px;height:58px;min-width:58px;border-radius:50%;border:2px solid #00ead3;background:radial-gradient(circle,#fff,rgba(255,255,255,.78));display:grid;place-items:center;position:relative;box-shadow:0 0 16px rgba(0,234,211,.65);overflow:hidden;transform:translateX(5px)}
-#${uid} .tu-logo span{font-family:'Secular One',sans-serif;color:#021815;font-size:15px;z-index:0}
-#${uid} .tu-logo img{position:absolute;inset:5px;width:calc(100% - 10px);height:calc(100% - 10px);object-fit:contain;border-radius:50%;z-index:1}
-#${uid} .tu-mid{text-align:center;border-radius:18px;padding:10px 8px;background:linear-gradient(180deg,#00ead3,#058d84);color:#00110f;box-shadow:0 0 18px rgba(0,234,211,.62)}
-#${uid} .tu-vs{font-weight:900;font-size:11px;letter-spacing:1.3px;color:rgba(0,0,0,.70)}
-#${uid} .tu-score{font-family:'Secular One',sans-serif;font-size:clamp(26px,4vw,38px);line-height:1;margin:5px 0;text-shadow:0 1px 0 rgba(255,255,255,.35)}
-#${uid} .tu-time{display:inline-block;border-radius:999px;background:rgba(0,0,0,.72);color:#dffffc;padding:5px 9px;font-size:12px;font-weight:900;white-space:nowrap}
-#${uid} .tu-foot{text-align:center;color:rgba(255,255,255,.68);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-top:18px}
+#${uid} .tu-team{display:flex;align-items:center;gap:12px;min-width:0;position:relative}
+#${uid} .tu-left{justify-content:flex-end;text-align:right}
+#${uid} .tu-right{justify-content:flex-start;text-align:left}
+#${uid} .tu-name{font-family:'Secular One',sans-serif;font-size:clamp(11px,1.8vw,15px);text-transform:uppercase;text-shadow:0 2px 4px #000;line-height:1.2;flex:1;overflow-wrap:anywhere}
+#${uid} .tu-logo{width:46px;height:46px;min-width:46px;border-radius:50%;border:2px solid #00ead3;background:radial-gradient(circle,#fff,rgba(255,255,255,.78));display:grid;place-items:center;position:relative;box-shadow:0 0 12px rgba(0,234,211,.45);overflow:hidden}
+#${uid} .tu-logo span{font-family:'Secular One',sans-serif;color:#021815;font-size:12px;z-index:0}
+#${uid} .tu-logo img{position:absolute;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px);object-fit:contain;border-radius:50%;z-index:1}
+#${uid} .tu-mid{text-align:center;border-radius:16px;padding:8px 5px;background:linear-gradient(180deg,#00ead3,#058d84);color:#00110f;box-shadow:0 0 15px rgba(0,234,211,.5)}
+#${uid} .tu-vs{font-weight:900;font-size:9px;letter-spacing:1px;color:rgba(0,0,0,.6)}
+#${uid} .tu-score{font-family:'Secular One',sans-serif;font-size:clamp(20px,3.5vw,28px);line-height:1;margin:3px 0}
+#${uid} .tu-time{display:inline-block;border-radius:999px;background:rgba(0,0,0,.7);color:#dffffc;padding:3px 8px;font-size:10px;font-weight:900;white-space:nowrap}
+#${uid} .tu-foot{text-align:center;color:rgba(255,255,255,.6);font-size:11px;font-weight:800;text-transform:uppercase;margin-top:18px}
+
 @media(max-width:760px){
-  #${uid} .tu-inner{padding:14px}
-  #${uid} .tu-controls{grid-template-columns:1fr}
-  #${uid} .tu-match{grid-template-columns:1fr 112px 1fr;padding:11px 7px;gap:7px;border-radius:16px}
-  #${uid} .tu-logo{width:38px;height:38px;min-width:38px}
-  #${uid} .tu-logo span{font-size:11px}
-  #${uid} .tu-name{font-size:12px}
-  #${uid} .tu-mid{border-radius:13px;padding:8px 4px}
-  #${uid} .tu-score{font-size:22px}
-  #${uid} .tu-time{font-size:10px;padding:4px 6px}
-  #${uid} .tu-title{border-radius:18px}
+  #${uid} .tu-inner{padding:15px 8px}
+  /* Control tetap sejajar di mobile tapi dikecilkan */
+  #${uid} .tu-controls{grid-template-columns: 1fr 1.5fr 1fr; gap:5px; margin:12px 0}
+  #${uid} .tu-info, #${uid} .tu-select{font-size:10px; min-height:38px; padding:4px; border-radius:8px}
+  #${uid} .tu-clock small{font-size:7px}
+  #${uid} .tu-clock b{font-size:10px}
+  
+  #${uid} .tu-match{grid-template-columns:1fr 85px 1fr;padding:10px 5px;gap:5px;border-radius:15px}
+  #${uid} .tu-match::after{border-radius:13px}
+  #${uid} .tu-logo{width:34px;height:34px;min-width:34px}
+  #${uid} .tu-logo span{font-size:9px}
+  #${uid} .tu-name{font-size:10px}
+  #${uid} .tu-score{font-size:19px}
+  #${uid} .tu-time{font-size:8.5px;padding:2px 6px}
+  #${uid} .tu-mid{border-radius:11px;padding:5px 2px}
 }
 </style>
 <div id="${uid}">
   <div class="tu-inner">
     <div class="tu-top">${logo}<div class="tu-title">🏆 ${tuEsc(cfg.title)} 🏆</div></div>
     <div class="tu-controls">
-      <div class="tu-info">Total Match: ${total}</div>
+      <div class="tu-info">MATCH: ${total}</div>
       <select class="tu-select" data-tu-filter>${opt}</select>
-      <div class="tu-info tu-clock"><small>Zona Waktu Sekarang</small><b data-tu-clock>WIB • --/--/---- • --:--:--</b></div>
+      <div class="tu-info tu-clock"><small>WAKTU</small><b data-tu-clock>--:--</b></div>
     </div>
     <div class="tu-ticker"><span>📣 ${tuEsc(cfg.run)} &nbsp;&nbsp;&nbsp; 📣 ${tuEsc(cfg.run)}</span></div>
     <div class="tu-list">${content}</div>
     <div class="tu-foot">© Copyright 2026</div>
   </div>
 </div>
-<script>(function(){var root=document.getElementById(${JSON.stringify(uid)});if(!root)return;var sel=root.querySelector('[data-tu-filter]');if(sel){sel.addEventListener('change',function(){var val=this.value;root.querySelectorAll('.tu-league').forEach(function(x){x.style.display=(val==='all'||x.getAttribute('data-league')===val)?'block':'none';});});}var clock=root.querySelector('[data-tu-clock]');function updClock(){if(!clock)return;var now=new Date();var parts=new Intl.DateTimeFormat('id-ID',{timeZone:'Asia/Jakarta',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(now);var m={};parts.forEach(function(p){m[p.type]=p.value;});clock.textContent='WIB • '+m.day+'/'+m.month+'/'+m.year+' • '+m.hour+':'+m.minute+':'+m.second;}updClock();setInterval(updClock,1000);})();<\/script>`;
+<script>(function(){var root=document.getElementById(${JSON.stringify(uid)});if(!root)return;var sel=root.querySelector('[data-tu-filter]');if(sel){sel.addEventListener('change',function(){var val=this.value;root.querySelectorAll('.tu-league').forEach(function(x){x.style.display=(val==='all'||x.getAttribute('data-league')===val)?'block':'none';});});}var clock=root.querySelector('[data-tu-clock]');function updClock(){if(!clock)return;var now=new Date();var parts=new Intl.DateTimeFormat('id-ID',{timeZone:'Asia/Jakarta',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(now);var m={};parts.forEach(function(p){m[p.type]=p.value;});clock.textContent=m.hour+':'+m.minute+':'+m.second+' WIB';}updClock();setInterval(updClock,1000);})();<\/script>`;
 }
+
 function bindPreview(box){
   const root=box.querySelector('[id^="TU_PRO_"]');
   if(!root)return;
@@ -396,9 +411,9 @@ function generateTUPro(){
   const parsed=parseGroups(raw);
   const err=document.getElementById('tuError');
   err.style.display='none';
-  if(!parsed.groups.length){err.textContent='Data belum terbaca. Gunakan format: 21/06 00:00 TEAM A vs TEAM B 1:0';err.style.display='block';return;}
+  if(!parsed.groups.length){err.textContent='Data belum terbaca. Gunakan format yang benar.';err.style.display='block';return;}
   const cfg={
-    title:document.getElementById('tglInp').value||'PREDIKSI BOLA TERJITU',
+    title:document.getElementById('tglInp').value||'PREDIKSI BOLA',
     run:document.getElementById('runInp').value||'SELAMAT DATANG',
     logo:document.getElementById('logoInp').value.trim(),
     bg:document.getElementById('bgInp').value.trim()
@@ -412,26 +427,22 @@ function generateTUPro(){
   bindPreview(box);
   const total=parsed.groups.reduce((a,g)=>a+g.matches.length,0);
   document.getElementById('tuCount').textContent=total+' Match • '+parsed.groups.length+' Liga';
-  if(parsed.bad.length){err.textContent='Ada '+parsed.bad.length+' baris tidak terbaca. Cek format baris tersebut.';err.style.display='block';}
 }
 async function copyCodeTU(){
   if(!TU_LAST_GENERATED)generateTUPro();
-  if(!TU_LAST_GENERATED)return;
   try{await navigator.clipboard.writeText(TU_LAST_GENERATED);showMsg('tuOk','Kode HTML berhasil dicopy.');}
   catch(e){const c=document.getElementById('finalHtml');c.style.display='block';c.select();document.execCommand('copy');showMsg('tuOk','Kode HTML berhasil dicopy.');}
 }
 function downloadCodeTU(){
   if(!TU_LAST_GENERATED)generateTUPro();
-  if(!TU_LAST_GENERATED)return;
   const blob=new Blob([TU_LAST_GENERATED],{type:'text/html'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='hasil-generate-worldcup-keren-v4.html';
+  a.download='hasil-generate-worldcup-v4.html';
   document.body.appendChild(a);
   a.click();
   a.remove();
-  setTimeout(()=>URL.revokeObjectURL(a.href),600);
-  showMsg('tuOk','File HTML hasil generate berhasil dibuat.');
+  showMsg('tuOk','File HTML berhasil didownload.');
 }
 window.addEventListener('load',generateTUPro);
 </script>
